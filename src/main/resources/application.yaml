@@ -1,0 +1,61 @@
+spring:
+  profiles:
+    active: h2
+  application:
+    name: liquibase
+  h2:
+    console.enabled: true
+    console.path: /h2-console
+    console.settings.trace: false
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+    enabled: false
+
+server:
+  servlet:
+    context-path: /liquibase
+
+logging:
+  level:
+    "liquibase" : info
+
+changeLogFile: ${spring.liquibase.change-log}
+---
+spring:
+  profiles: docker
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/liquibasedemo?current_schema=public
+    driverClassName: org.postgresql.Driver
+    username: demouser
+    password: demopassword
+  liquibase:
+    parameters:
+      textColumnType: TEXT
+    contexts: nonprod
+#    url: jdbc:h2:mem:liquibasedemo
+#    driverClassName: org.h2.Driver
+#    username: demouser
+#    password: demopassword
+---
+spring:
+  profiles: h2
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  datasource:
+    url: jdbc:h2:mem:liquibasedemo
+    driverClassName: org.h2.Driver
+    username: demouser
+    password: demopassword
+  liquibase:
+    parameters:
+      textColumnType: VARCHAR(250)
+    contexts: nonprod
+#    url: jdbc:h2:mem:liquibasedemo
+#    driverClassName: org.h2.Driver
+#    username: demouser
+#    password: demopassword
+  h2:
+    console:
+      enabled: true
